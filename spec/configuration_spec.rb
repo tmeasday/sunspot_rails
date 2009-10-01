@@ -32,18 +32,15 @@ describe Sunspot::Rails::Configuration, "default values" do
   end
 
   it "should handle the 'data_path' property when not set" do
-    config = Sunspot::Rails::Configuration.new
-    config.data_path.should == File.dirname(__FILE__) + '/mock_app/solr/data/test'
+    @config.data_path.should == File.expand_path(File.dirname(__FILE__) + '/mock_app/solr/data/test')
   end
 
   it "should handle the 'pid_path' property when not set" do
-    config = Sunspot::Rails::Configuration.new
-    config.pid_path.should == File.dirname(__FILE__) + '/mock_app/solr/pids/test'
+    @config.pid_path.should == File.expand_path(File.dirname(__FILE__) + '/mock_app/solr/pids/test')
   end
   
   it "should handle the 'solr_home' property when not set" do
-    config = Sunspot::Rails::Configuration.new
-    config.solr_home.should == nil
+    @config.solr_home.should == nil
   end
 
   it "should handle the 'auto_commit_after_request' propery when not set" do
