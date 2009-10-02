@@ -46,6 +46,10 @@ describe Sunspot::Rails::Configuration, "default values" do
   it "should handle the 'auto_commit_after_request' propery when not set" do
     @config.auto_commit_after_request?.should == true
   end
+  
+  it "should handle the 'ignore_errors' property when not set" do
+    @config.ignore_errors?.should == false
+  end
 end
 
 describe Sunspot::Rails::Configuration, "user settings" do
@@ -88,5 +92,9 @@ describe Sunspot::Rails::Configuration, "user settings" do
 
   it "should handle the 'auto_commit_after_request' propery when set" do
     @config.auto_commit_after_request?.should == false
+  end
+  
+  it "should handle the 'ignore_errors' property when set" do
+    @config.ignore_errors?.should == true
   end
 end

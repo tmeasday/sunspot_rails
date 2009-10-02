@@ -50,20 +50,30 @@ module Sunspot #:nodoc:
         #
         def searchable(options = {}, &block)
           Sunspot.setup(self, &block)
-
+          
           unless searchable?
             extend ClassMethods
             include InstanceMethods
 
             unless options[:auto_index] == false
               after_save do |searchable|
-                searchable.index
+                begin
+                  searchable.index
+                rescue RSolr::RequestError => e
+                  raise e unless Sunspot::Rails.configuration.ignore_errors?
+                  ::Rails.logger.warn "Sunspot::Rails Error: #{e}"
+                end
               end
             end
 
             unless options[:auto_remove] == false
               after_destroy do |searchable|
-                searchable.remove_from_index
+                begin
+                  searchable.remove_from_index
+                rescue RSolr::RequestError => e
+                  raise e unless Sunspot::Rails.configuration.ignore_errors?
+                  ::Rails.logger.warn "Sunspot::Rails Error:: #{e}"
+                end
               end
             end
           end

@@ -182,6 +182,20 @@ module Sunspot #:nodoc:
           end
       end
       
+      # 
+      # Do we ignore (just send to the rails log) RSolr connection errors when
+      # writing to the index. This means if solr goes down, our app continues to 
+      # operate, albeit with no search functionality.
+      # Default: false
+      #
+      # ==== Returns
+      #
+      # Boolean:: ignore_errors
+      #
+      def ignore_errors?
+        @ignore_errors ||= (user_configuration_from_key('ignore_errors') || false)
+      end
+      
       private
       
       #
