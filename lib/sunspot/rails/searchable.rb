@@ -34,6 +34,10 @@ module Sunspot #:nodoc:
         #   Automatically remove models from the Solr index when they are
         #   destroyed. <b>Setting this option to +false+ is not recommended
         #   </b>(see the README).
+        # :reindex_opts<Hash>::
+        #   Specify the default options to use on the ActiveRecord find call
+        #   when reindexing this model. For example you may need an :include 
+        #   option for efficiency reasons.
         #
         # ==== Example
         #
@@ -75,6 +79,10 @@ module Sunspot #:nodoc:
                   ::Rails.logger.warn "Sunspot::Rails Error:: #{e}"
                 end
               end
+            end
+            
+            if options[:reindex_opts]
+              @sunspot_reindex_opts = options[:reindex_opts]
             end
           end
         end
@@ -187,7 +195,10 @@ module Sunspot #:nodoc:
         #   Post.reindex(:include => :author) 
         #
         def reindex(opts={})
-          options = { :batch_size => 500, :batch_commit => true, :include => []}.merge(opts)
+          options = {:batch_size => 500, :batch_commit => true, :include => [], :conditions => []}
+          options.merge!(@sunspot_reindex_opts || {})
+          options.merge!(opts)
+          
           remove_all_from_index
           unless options[:batch_size]
             Sunspot.index!(all(:include => options[:include]))
