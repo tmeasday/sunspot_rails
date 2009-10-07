@@ -10,7 +10,11 @@ module Sunspot #:nodoc:
         def included(base) #:nodoc:
           base.after_filter do
             begin
-              Sunspot.commit_if_dirty if Sunspot::Rails.configuration.auto_commit_after_request?
+              if Sunspot::Rails.configuration.auto_commit_after_request?
+                Sunspot.commit_if_dirty
+              elsif Sunspot::Rails.configuration.auto_commit_after_delete_request?
+                Sunspot.commit_if_delete_dirty
+              end
             rescue RSolr::RequestError => e
               raise e unless Sunspot::Rails.configuration.ignore_errors?
               ::Rails.logger.warn "Sunspot::Rails Error:: #{e}"
